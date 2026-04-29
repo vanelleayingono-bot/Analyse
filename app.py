@@ -98,5 +98,4 @@ def stats():
                            meilleure_filiere=meilleure_filiere,
                            pire_filiere=pire_filiere,
                            classement=classement)
-if __name__ == "__main__":
-     app.run(debug=True) 
+
