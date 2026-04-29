@@ -1,0 +1,646 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@400;500;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #1a1a2e;
+    --accent: #4f46e5;
+    --accent-light: #818cf8;
+    --accent-glow: rgba(79, 70, 229, 0.12);
+    --surface: #ffffff;
+    --surface-2: #f8f7ff;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: rgba(79, 70, 229, 0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-display: 'Clash Display', sans-serif;
+    --font-body: 'Satoshi', sans-serif;
+  }
+
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
+  body { display: block; }
+
+  .page-wrapper {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--surface);
+    min-height: 100vh;
+    padding: clamp(40px, 6vw, 80px) clamp(20px, 5vw, 80px);
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    max-width: 1100px;
+    margin: 0 auto 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 24px;
+  }
+
+  .page-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--primary);
+    line-height: 1.1;
+  }
+
+  .page-subtitle {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 420px;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .student-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-back:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  .btn-back svg {
+    width: 16px; height: 16px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-add:hover { opacity: 0.88; transform: translateY(-2px); }
+
+  .btn-add svg {
+    width: 16px; height: 16px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .search-bar {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+
+  .search-bar svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px; height: 15px;
+    stroke: var(--text-muted); fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  #search-input {
+    width: 100%;
+    padding: 12px 14px 12px 40px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    background: var(--surface);
+  }
+
+  #search-input::placeholder { color: var(--text-muted); }
+
+  .filter-select {
+    padding: 12px 14px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: none;
+    padding-right: 32px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+
+  .filter-select:focus { border-color: var(--accent); }
+
+  /* ── STATS MINI STRIP ── */
+  .mini-stats {
+    max-width: 1100px;
+    margin: 0 auto 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .mini-stat {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mini-stat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(79,70,229,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mini-stat-icon svg {
+    width: 17px; height: 17px;
+    stroke: var(--accent); fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .mini-stat-body {}
+
+  .mini-stat-num {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .mini-stat-label {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  /* ── TABLE WRAPPER ── */
+  .table-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  thead th {
+    padding: 14px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-muted);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-2); }
+
+  tbody td {
+    padding: 16px 20px;
+    font-size: 15px;
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  .student-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    flex-shrink: 0;
+    font-family: var(--font-display);
+  }
+
+  .student-name {
+    font-weight: 500;
+    color: var(--primary);
+    line-height: 1.3;
+  }
+
+  .student-id {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .badge-filiere {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .badge-niveau {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #059669;
+    white-space: nowrap;
+  }
+
+  .moyenne {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .moy-high { color: #059669; }
+  .moy-mid  { color: #d97706; }
+  .moy-low  { color: #dc2626; }
+
+  .moy-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .moy-bar {
+    width: 60px;
+    height: 5px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .moy-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s;
+  }
+
+  .fill-high { background: #059669; }
+  .fill-mid  { background: #d97706; }
+  .fill-low  { background: #dc2626; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    display: none;
+  }
+
+  .empty-state svg {
+    width: 44px; height: 44px;
+    stroke: var(--text-muted); fill: none;
+    stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    margin-bottom: 14px;
+  }
+
+  .empty-state p {
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 760px) {
+    .mini-stats { grid-template-columns: 1fr; }
+    .page-header { grid-template-columns: 1fr; }
+    .header-actions { flex-direction: row; align-items: flex-start; }
+  }
+
+  @media (max-width: 640px) {
+    .table-wrapper { border-radius: var(--radius-sm); }
+    thead { display: none; }
+    tbody tr {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody td {
+      padding: 0;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    tbody td::before {
+      content: attr(data-label);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .student-cell { flex-direction: row; }
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .filter-select { width: 100%; }
+  }
+</style>
+
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <span class="section-label">Annuaire académique</span>
+      <h1 class="page-title">Registre des étudiants</h1>
+      <p class="page-subtitle">Consultez, recherchez et gérez l'ensemble des dossiers inscrits cette année.</p>
+      <div class="header-meta">
+        <span class="student-count" id="count-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span id="count-num">{{ etudiants|length }}</span> étudiant{% if etudiants|length != 1 %}s{% endif %} inscrits
+        </span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="action-row">
+        <a href="/" class="btn-back">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          Accueil
+        </a>
+        <a href="/ajouter" class="btn-add">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nouvel étudiant
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINI STATS -->
+  <div class="mini-stats">
+    <div class="mini-stat">
+      <div class="mini-stat-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      </div>
+      <div class="mini-stat-body">
+        <div class="mini-stat-num" id="stat-total">{{ etudiants|length }}</div>
+        <div class="mini-stat-label">Étudiants au total</div>
+      </div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="mini-stat-body">
+        <div class="mini-stat-num" id="stat-avg">
+          {% if etudiants %}{{ "%.1f"|format(etudiants|sum(attribute='moyenne') / etudiants|length) }}{% else %}—{% endif %}
+        </div>
+        <div class="mini-stat-label">Moyenne générale</div>
+      </div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div class="mini-stat-body">
+        <div class="mini-stat-num" id="stat-filieres">
+          {% set filieres = etudiants|map(attribute='filiere')|list|unique|list %}{{ filieres|length }}
+        </div>
+        <div class="mini-stat-label">Filières représentées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search-input" placeholder="Rechercher un étudiant, une filière…">
+    </div>
+    <select class="filter-select" id="filter-niveau">
+      <option value="">Tous les niveaux</option>
+      {% set niveaux = etudiants|map(attribute='niveau')|list|unique|list %}
+      {% for n in niveaux %}
+      <option value="{{ n|lower }}">{{ n }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrapper">
+    <table id="students-table">
+      <thead>
+        <tr>
+          <th>Étudiant</th>
+          <th>Filière</th>
+          <th>Niveau</th>
+          <th>Moyenne</th>
+        </tr>
+      </thead>
+      <tbody id="students-body">
+        {% for e in etudiants %}
+        <tr data-search="{{ e.nom|lower }} {{ e.prenom|lower }} {{ e.filiere|lower }} {{ e.niveau|lower }}"
+            data-niveau="{{ e.niveau|lower }}">
+          <td data-label="Étudiant">
+            <div class="student-cell">
+              <div class="avatar">{{ e.nom[0]|upper }}{{ e.prenom[0]|upper }}</div>
+              <div>
+                <div class="student-name">{{ e.nom }} {{ e.prenom }}</div>
+                <div class="student-id">{{ e.filiere }} · {{ e.niveau }}</div>
+              </div>
+            </div>
+          </td>
+          <td data-label="Filière"><span class="badge-filiere">{{ e.filiere }}</span></td>
+          <td data-label="Niveau"><span class="badge-niveau">{{ e.niveau }}</span></td>
+          <td data-label="Moyenne">
+            <div class="moy-bar-wrap">
+              <span class="moyenne {% if e.moyenne >= 14 %}moy-high{% elif e.moyenne >= 10 %}moy-mid{% else %}moy-low{% endif %}">
+                {{ e.moyenne }}/20
+              </span>
+              <div class="moy-bar">
+                <div class="moy-bar-fill {% if e.moyenne >= 14 %}fill-high{% elif e.moyenne >= 10 %}fill-mid{% else %}fill-low{% endif %}"
+                     style="width: {{ (e.moyenne / 20 * 100)|round }}%"></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="empty-state" id="empty-state">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p>Aucun résultat pour cette recherche.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const input      = document.getElementById('search-input');
+  const filterNiv  = document.getElementById('filter-niveau');
+  const rows       = document.querySelectorAll('#students-body tr');
+  const empty      = document.getElementById('empty-state');
+  const countNum   = document.getElementById('count-num');
+
+  function applyFilters() {
+    const q   = input.value.toLowerCase().trim();
+    const niv = filterNiv.value.toLowerCase();
+    let visible = 0;
+    rows.forEach(row => {
+      const matchQ   = !q   || row.dataset.search.includes(q);
+      const matchNiv = !niv || row.dataset.niveau === niv;
+      const show = matchQ && matchNiv;
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    empty.style.display = visible === 0 ? 'block' : 'none';
+    countNum.textContent = visible;
+  }
+
+  input.addEventListener('input', applyFilters);
+  filterNiv.addEventListener('change', applyFilters);
+</script>
+
+{% endblock %}

@@ -1,0 +1,960 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@400;500;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #1a1a2e;
+    --accent: #4f46e5;
+    --accent-light: #818cf8;
+    --accent-glow: rgba(79, 70, 229, 0.12);
+    --surface: #ffffff;
+    --surface-2: #f8f7ff;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: rgba(79, 70, 229, 0.12);
+    --green: #059669;
+    --green-bg: rgba(5, 150, 105, 0.1);
+    --red: #dc2626;
+    --red-bg: rgba(220, 38, 38, 0.1);
+    --amber: #d97706;
+    --amber-bg: rgba(217, 119, 6, 0.1);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-display: 'Clash Display', sans-serif;
+    --font-body: 'Satoshi', sans-serif;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    display: block;
+    min-height: 100vh;
+    background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.14), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.12), transparent 28%),
+                linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .page-wrapper {
+    perspective: 1400px;
+  }
+
+  .floating-card {
+    transform-style: preserve-3d;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    animation: float 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes float {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(0, -8px, 0); }
+  }
+
+  .page-wrapper {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--surface);
+    min-height: 100vh;
+    padding: clamp(40px, 6vw, 80px) clamp(20px, 5vw, 80px);
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--primary);
+    line-height: 1.1;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .btn-back:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .btn-back svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── SECTION TITLE ── */
+  .section-heading {
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-heading h2 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+  }
+  .section-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── METRIC CARDS ── */
+  .metrics-grid {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    animation: float 10s ease-in-out infinite alternate;
+  }
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  }
+  .metric-card:hover { transform: translateY(-8px) rotateX(4deg) rotateY(-2deg); box-shadow: 0 16px 40px rgba(79,70,229,0.1); }
+
+  .metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-muted);
+  }
+  .metric-value {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--primary);
+  }
+  .metric-value.green { color: var(--green); }
+  .metric-value.amber { color: var(--amber); }
+  .metric-value.red   { color: var(--red); }
+  .metric-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── PODIUM ── */
+  .podium-grid {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .podium-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    transform-style: preserve-3d;
+    animation: float 10s ease-in-out infinite alternate;
+  }
+  .podium-card:hover { transform: translateY(-7px) rotateX(3deg) rotateY(1deg); box-shadow: 0 20px 52px rgba(79,70,229,0.13); }
+  .podium-card.best  { background: var(--green-bg); border-color: rgba(5,150,105,0.2); }
+  .podium-card.worst { background: var(--red-bg);   border-color: rgba(220,38,38,0.2); }
+
+  .podium-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .podium-icon.best  { background: rgba(5,150,105,0.15); }
+  .podium-icon.worst { background: rgba(220,38,38,0.12); }
+  .podium-icon svg { width: 22px; height: 22px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .podium-icon.best  svg { stroke: var(--green); }
+  .podium-icon.worst svg { stroke: var(--red); }
+
+  .podium-info { display: flex; flex-direction: column; gap: 4px; }
+  .podium-type { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; }
+  .podium-type.best  { color: var(--green); }
+  .podium-type.worst { color: var(--red); }
+  .podium-name { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--primary); }
+  .podium-moy  { font-size: 13px; color: var(--text-muted); }
+
+  /* ── CHARTS GRID - Réorganisé en 2 colonnes égales ── */
+  .charts-grid {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transform-style: preserve-3d;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    animation: float 10s ease-in-out infinite alternate;
+  }
+
+  .chart-card:hover { transform: translateY(-6px) rotateX(4deg) rotateY(-2deg); box-shadow: 0 24px 54px rgba(79,70,229,0.14); }
+
+  /* Le 3ème graphique prend toute la largeur */
+  .chart-card.full-width {
+    grid-column: span 2;
+  }
+
+  .chart-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+  }
+
+  .chart-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  canvas { width: 100% !important; }
+
+  /* ── STATS DESCRIPTIVES - Réorganisé en 2x2 ── */
+  .desc-grid {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .desc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    transform-style: preserve-3d;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    animation: float 10s ease-in-out infinite alternate;
+  }
+
+  .desc-card:hover { transform: translateY(-6px) rotateX(4deg) rotateY(-2deg); box-shadow: 0 24px 54px rgba(79,70,229,0.14); }
+
+  .desc-card-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .desc-rows { display: flex; flex-direction: column; gap: 10px; }
+
+  .desc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .desc-key {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .desc-val {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .desc-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 80px;
+  }
+  .desc-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 4px; }
+
+  /* ── FILIERE TABLE ── */
+  .filiere-table-wrap {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .filiere-table-wrap table { width: 100%; border-collapse: collapse; }
+  .filiere-table-wrap thead { background: var(--surface-2); border-bottom: 1px solid var(--border); }
+  .filiere-table-wrap thead th { padding: 13px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); text-align: left; }
+  .filiere-table-wrap tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .filiere-table-wrap tbody tr:last-child { border-bottom: none; }
+  .filiere-table-wrap tbody tr:hover { background: var(--surface-2); }
+  .filiere-table-wrap tbody td { padding: 14px 20px; font-size: 14px; color: var(--text); vertical-align: middle; }
+
+  .progress-cell { display: flex; align-items: center; gap: 12px; }
+  .progress-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 4px; min-width: 80px; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 4px; }
+  .progress-val { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--primary); min-width: 40px; text-align: right; }
+
+  /* ── CLASSEMENT ── */
+  .classement-wrap {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .classement-wrap table { width: 100%; border-collapse: collapse; }
+  .classement-wrap thead { background: var(--surface-2); border-bottom: 1px solid var(--border); }
+  .classement-wrap thead th { padding: 13px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); text-align: left; }
+  .classement-wrap tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .classement-wrap tbody tr:last-child { border-bottom: none; }
+  .classement-wrap tbody tr:hover { background: var(--surface-2); }
+  .classement-wrap tbody td { padding: 14px 20px; font-size: 14px; color: var(--text); vertical-align: middle; }
+
+  .rank-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  }
+  .rank-1 { background: #fef3c7; color: #92400e; border: 1.5px solid #fcd34d; }
+  .rank-2 { background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1; }
+  .rank-3 { background: #fff7ed; color: #9a3412; border: 1.5px solid #fdba74; }
+  .rank-n  { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); font-size: 13px; }
+
+  .student-cell { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--accent-glow); border: 1px solid rgba(79,70,229,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--accent);
+    font-family: var(--font-display); flex-shrink: 0;
+  }
+  .student-name { font-weight: 500; color: var(--primary); }
+
+  .moyenne { font-family: var(--font-display); font-weight: 600; }
+  .moy-high { color: var(--green); }
+  .moy-mid  { color: var(--amber); }
+  .moy-low  { color: var(--red); }
+
+  /* ── SECTION TITLES DÉCALÉS ── */
+  .stats-title {
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    margin-top: 0;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .charts-grid { grid-template-columns: 1fr; }
+    .chart-card.full-width { grid-column: span 1; }
+    .desc-grid   { grid-template-columns: 1fr; }
+    .podium-grid { grid-template-columns: 1fr; }
+    .page-header { flex-direction: column; align-items: flex-start; }
+    .classement-wrap thead { display: none; }
+    .classement-wrap tbody tr { display: flex; flex-direction: column; gap: 8px; padding: 16px; }
+    .classement-wrap tbody td { padding: 0; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+    .classement-wrap tbody td::before { content: attr(data-label); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+    .filiere-table-wrap thead { display: none; }
+    .filiere-table-wrap tbody tr { display: flex; flex-direction: column; gap: 8px; padding: 16px; }
+    .filiere-table-wrap tbody td { padding: 0; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+    .filiere-table-wrap tbody td::before { content: attr(data-label); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+  }
+</style>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div>
+      <div class="section-label">Tableau de bord</div>
+      <h1 class="page-title">Analyse avancée</h1>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <a href="/" class="btn-back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Accueil
+      </a>
+      <a href="/liste" class="btn-back" style="border-color:var(--accent);color:var(--accent);background:var(--accent-glow);">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Liste
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ NOUVELLE DISPOSITION ══ -->
+  
+  <!-- 1. VUE D'ENSEMBLE - KPI CARDS -->
+  <div class="section-heading"><h2>Vue d'ensemble</h2></div>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Total étudiants</div>
+      <div class="metric-value">{{ total.total }}</div>
+      <div class="metric-sub">Inscrits au total</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Moyenne générale</div>
+      <div class="metric-value {% if moyenne.moy >= 14 %}green{% elif moyenne.moy >= 10 %}amber{% else %}red{% endif %}">
+        {{ moyenne.moy | round(2) }}
+      </div>
+      <div class="metric-sub">Sur 20 points</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Taux de réussite</div>
+      <div class="metric-value green" id="taux-reussite">—</div>
+      <div class="metric-sub">Moyenne ≥ 10/20</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Nombre de filières</div>
+      <div class="metric-value">{{ filieres | length }}</div>
+      <div class="metric-sub">Filières distinctes</div>
+    </div>
+  </div>
+
+  <!-- 2. PODIUM DES FILIÈRES -->
+  <div class="section-heading"><h2>Podium des filières</h2></div>
+  <div class="podium-grid">
+    <div class="podium-card best">
+      <div class="podium-icon best">
+        <svg viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
+      </div>
+      <div class="podium-info">
+        <div class="podium-type best">Meilleure filière</div>
+        <div class="podium-name">{{ meilleure_filiere.filiere }}</div>
+        <div class="podium-moy">Moyenne : {{ meilleure_filiere.moy | round(2) }}/20</div>
+      </div>
+    </div>
+    <div class="podium-card worst">
+      <div class="podium-icon worst">
+        <svg viewBox="0 0 24 24"><polyline points="17 6 12 11 7 6"/><polyline points="17 13 12 18 7 13"/></svg>
+      </div>
+      <div class="podium-info">
+        <div class="podium-type worst">Filière la plus faible</div>
+        <div class="podium-name">{{ pire_filiere.filiere }}</div>
+        <div class="podium-moy">Moyenne : {{ pire_filiere.moy | round(2) }}/20</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. TABLEAU DES FILIÈRES -->
+  <div class="section-heading"><h2>Moyenne par filière</h2></div>
+  <div class="filiere-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Filière</th>
+          <th>Moyenne</th>
+          <th style="min-width:160px;">Performance</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in filieres %}
+        <tr>
+          <td data-label="Filière" style="font-weight:500;">{{ f.filiere }}</td>
+          <td data-label="Moyenne">
+            <span class="moyenne {% if f.moy >= 14 %}moy-high{% elif f.moy >= 10 %}moy-mid{% else %}moy-low{% endif %}">
+              {{ f.moy | round(2) }}/20
+            </span>
+          </td>
+          <td data-label="Performance">
+            <div class="progress-cell">
+              <div class="progress-bar-wrap">
+                <div class="progress-bar" style="width:{{ (f.moy / 20 * 100) | round }}%"></div>
+              </div>
+              <span class="progress-val">{{ (f.moy / 20 * 100) | round }}%</span>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4. STATISTIQUES DESCRIPTIVES (2x2) -->
+  <div class="section-heading stats-title"><h2>Statistiques descriptives</h2></div>
+  <div class="desc-grid">
+
+    <!-- Tendance centrale -->
+    <div class="desc-card">
+      <div class="desc-card-title">Tendance centrale</div>
+      <div class="desc-rows">
+        <div class="desc-row">
+          <span class="desc-key">Moyenne (μ)</span>
+          <div class="desc-bar-wrap"><div class="desc-bar" id="bar-moy"></div></div>
+          <span class="desc-val" id="val-moy">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Médiane</span>
+          <div class="desc-bar-wrap"><div class="desc-bar" id="bar-med"></div></div>
+          <span class="desc-val" id="val-med">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Mode</span>
+          <div class="desc-bar-wrap"><div class="desc-bar" id="bar-mod"></div></div>
+          <span class="desc-val" id="val-mod">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dispersion -->
+    <div class="desc-card">
+      <div class="desc-card-title">Dispersion</div>
+      <div class="desc-rows">
+        <div class="desc-row">
+          <span class="desc-key">Variance (σ²)</span>
+          <span class="desc-val" id="val-var">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Écart-type (σ)</span>
+          <span class="desc-val" id="val-std">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Coef. variation</span>
+          <span class="desc-val" id="val-cv">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Étendue</span>
+          <span class="desc-val" id="val-range">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quartiles -->
+    <div class="desc-card">
+      <div class="desc-card-title">Quartiles & Extrêmes</div>
+      <div class="desc-rows">
+        <div class="desc-row">
+          <span class="desc-key">Minimum</span>
+          <span class="desc-val red" id="val-min">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Q1 (25 %)</span>
+          <span class="desc-val" id="val-q1">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Q2 — Médiane</span>
+          <span class="desc-val" id="val-q2">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Q3 (75 %)</span>
+          <span class="desc-val" id="val-q3">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Maximum</span>
+          <span class="desc-val green" id="val-max">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Interquartile (IQR)</span>
+          <span class="desc-val" id="val-iqr">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forme -->
+    <div class="desc-card">
+      <div class="desc-card-title">Forme de la distribution</div>
+      <div class="desc-rows">
+        <div class="desc-row">
+          <span class="desc-key">Asymétrie (skewness)</span>
+          <span class="desc-val" id="val-skew">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Aplatissement (kurtosis)</span>
+          <span class="desc-val" id="val-kurt">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Taux de réussite</span>
+          <span class="desc-val green" id="val-reussite">—</span>
+        </div>
+        <div class="desc-row">
+          <span class="desc-key">Taux d'échec</span>
+          <span class="desc-val red" id="val-echec">—</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 5. VISUALISATIONS (graphiques) -->
+  <div class="section-heading"><h2>Visualisations</h2></div>
+  <div class="charts-grid">
+
+    <!-- Bar chart : moyenne par filière -->
+    <div class="chart-card">
+      <div>
+        <div class="chart-title">Moyenne par filière</div>
+        <div class="chart-subtitle">Comparaison des performances entre filières</div>
+      </div>
+      <canvas id="chartFilieres" height="220"></canvas>
+    </div>
+
+    <!-- Doughnut : répartition des étudiants -->
+    <div class="chart-card">
+      <div>
+        <div class="chart-title">Répartition des étudiants</div>
+        <div class="chart-subtitle">Nombre d'étudiants par filière</div>
+      </div>
+      <canvas id="chartRepartition" height="220"></canvas>
+    </div>
+
+    <!-- Distribution des moyennes (histogramme) - prend toute la largeur -->
+    <div class="chart-card full-width">
+      <div>
+        <div class="chart-title">Distribution des moyennes</div>
+        <div class="chart-subtitle">Histogramme de fréquence des notes</div>
+      </div>
+      <canvas id="chartDistrib" height="220"></canvas>
+    </div>
+
+    <!-- Classement top 10 horizontal - prend toute la largeur -->
+    <div class="chart-card full-width">
+      <div>
+        <div class="chart-title">Top 10 étudiants</div>
+        <div class="chart-subtitle">Classement par moyenne décroissante</div>
+      </div>
+      <canvas id="chartTop10" height="220"></canvas>
+    </div>
+
+  </div>
+
+  <!-- 6. CLASSEMENT GÉNÉRAL (en bas) -->
+  <div class="section-heading"><h2>Classement général</h2></div>
+  <div class="classement-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Étudiant</th>
+          <th>Moyenne</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in classement %}
+        <tr>
+          <td data-label="Rang">
+            {% if loop.index == 1 %}
+              <span class="rank-badge rank-1">1</span>
+            {% elif loop.index == 2 %}
+              <span class="rank-badge rank-2">2</span>
+            {% elif loop.index == 3 %}
+              <span class="rank-badge rank-3">3</span>
+            {% else %}
+              <span class="rank-badge rank-n">{{ loop.index }}</span>
+            {% endif %}
+          </td>
+          <td data-label="Étudiant">
+            <div class="student-cell">
+              <div class="avatar">{{ e.nom[0]|upper }}{{ e.prenom[0]|upper }}</div>
+              <span class="student-name">{{ e.nom }} {{ e.prenom }}</span>
+            </div>
+          </td>
+          <td data-label="Moyenne">
+            <span class="moyenne {% if e.moyenne >= 14 %}moy-high{% elif e.moyenne >= 10 %}moy-mid{% else %}moy-low{% endif %}">
+              {{ e.moyenne }}/20
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  /* ── Données injectées depuis Jinja ── */
+  const moyennes = [{% for e in classement %}{{ e.moyenne }}{% if not loop.last %},{% endif %}{% endfor %}];
+  const filiereLabels = [{% for f in filieres %}"{{ f.filiere }}"{% if not loop.last %},{% endif %}{% endfor %}];
+  const filiereMoys   = [{% for f in filieres %}{{ f.moy | round(2) }}{% if not loop.last %},{% endif %}{% endfor %}];
+  const top10Names    = [{% for e in classement[:10] %}"{{ e.nom[0] }}.{{ e.prenom }}"{% if not loop.last %},{% endif %}{% endfor %}];
+  const top10Moys     = [{% for e in classement[:10] %}{{ e.moyenne }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+  /* ── Fonctions stats ── */
+  function mean(arr) { return arr.reduce((a,b)=>a+b,0)/arr.length; }
+  function sorted(arr) { return [...arr].sort((a,b)=>a-b); }
+  function median(arr) {
+    const s=sorted(arr), n=s.length;
+    return n%2===0 ? (s[n/2-1]+s[n/2])/2 : s[Math.floor(n/2)];
+  }
+  function variance(arr) {
+    const m=mean(arr);
+    return arr.reduce((a,b)=>a+Math.pow(b-m,2),0)/arr.length;
+  }
+  function stddev(arr) { return Math.sqrt(variance(arr)); }
+  function quantile(arr,q) {
+    const s=sorted(arr), pos=(s.length-1)*q;
+    const lo=Math.floor(pos), hi=Math.ceil(pos);
+    return lo===hi ? s[lo] : s[lo]+(s[hi]-s[lo])*(pos-lo);
+  }
+  function mode(arr) {
+    const freq={};
+    arr.forEach(v=>{ freq[v]=(freq[v]||0)+1; });
+    let max=0, m=arr[0];
+    for(const [k,v] of Object.entries(freq)) { if(v>max){max=v;m=parseFloat(k);} }
+    return m;
+  }
+  function skewness(arr) {
+    const m=mean(arr), s=stddev(arr), n=arr.length;
+    return arr.reduce((a,b)=>a+Math.pow((b-m)/s,3),0)/n;
+  }
+  function kurtosis(arr) {
+    const m=mean(arr), s=stddev(arr), n=arr.length;
+    return arr.reduce((a,b)=>a+Math.pow((b-m)/s,4),0)/n - 3;
+  }
+
+  /* ── Calcul & affichage ── */
+  if (moyennes.length > 0) {
+    const n = moyennes.length;
+    const moy  = mean(moyennes);
+    const med  = median(moyennes);
+    const mod  = mode(moyennes);
+    const vari = variance(moyennes);
+    const std  = stddev(moyennes);
+    const cv   = std/moy*100;
+    const q1   = quantile(moyennes, 0.25);
+    const q2   = quantile(moyennes, 0.50);
+    const q3   = quantile(moyennes, 0.75);
+    const iqr  = q3-q1;
+    const mn   = Math.min(...moyennes);
+    const mx   = Math.max(...moyennes);
+    const eten = mx-mn;
+    const skew = skewness(moyennes);
+    const kurt = kurtosis(moyennes);
+    const reussite = moyennes.filter(m=>m>=10).length;
+    const echec    = n - reussite;
+    const txR = (reussite/n*100).toFixed(1);
+    const txE = (echec/n*100).toFixed(1);
+
+    const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+    const pct = v => Math.min(100, Math.round(v/20*100));
+
+    set('val-moy',  moy.toFixed(2)+'/20');
+    set('val-med',  med.toFixed(2)+'/20');
+    set('val-mod',  mod.toFixed(2)+'/20');
+    set('val-var',  vari.toFixed(3));
+    set('val-std',  std.toFixed(3));
+    set('val-cv',   cv.toFixed(1)+'%');
+    set('val-range',eten.toFixed(2));
+    set('val-min',  mn.toFixed(2)+'/20');
+    set('val-q1',   q1.toFixed(2)+'/20');
+    set('val-q2',   q2.toFixed(2)+'/20');
+    set('val-q3',   q3.toFixed(2)+'/20');
+    set('val-max',  mx.toFixed(2)+'/20');
+    set('val-iqr',  iqr.toFixed(2));
+    set('val-skew', skew.toFixed(3));
+    set('val-kurt', kurt.toFixed(3));
+    set('val-reussite', txR+'% ('+reussite+' étud.)');
+    set('val-echec',    txE+'% ('+echec+' étud.)');
+    set('taux-reussite', txR+'%');
+
+    const bp = v => { const el=document.getElementById(v); if(el) el.style.width=pct(parseFloat(el.parentElement.nextElementSibling?.textContent||'0').toFixed(0))+'%'; };
+    document.getElementById('bar-moy').style.width = pct(moy)+'%';
+    document.getElementById('bar-med').style.width = pct(med)+'%';
+    document.getElementById('bar-mod').style.width = pct(mod)+'%';
+  }
+
+  /* ── Couleurs Chart.js ── */
+  const colors = ['#4f46e5','#818cf8','#6366f1','#a5b4fc','#3730a3','#c7d2fe','#4338ca','#e0e7ff'];
+  const accent = '#4f46e5';
+  const accentLight = '#818cf8';
+
+  Chart.defaults.font.family = "'Satoshi', sans-serif";
+  Chart.defaults.color = '#6b7280';
+
+  /* ── Bar : filières ── */
+  new Chart(document.getElementById('chartFilieres'), {
+    type: 'bar',
+    data: {
+      labels: filiereLabels,
+      datasets: [{
+        label: 'Moyenne',
+        data: filiereMoys,
+        backgroundColor: filiereLabels.map((_,i) => colors[i % colors.length]+'cc'),
+        borderColor:      filiereLabels.map((_,i) => colors[i % colors.length]),
+        borderWidth: 1.5,
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' '+ctx.parsed.y.toFixed(2)+'/20' } } },
+      scales: {
+        y: { min: 0, max: 20, grid: { color: 'rgba(79,70,229,0.06)' }, ticks: { callback: v => v+'/20' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  /* ── Doughnut : répartition ── */
+  const countByFiliere = {};
+  {% for e in classement %}
+  countByFiliere["{{ e.filiere }}"] = (countByFiliere["{{ e.filiere }}"] || 0) + 1;
+  {% endfor %}
+  const doughnutData = filiereLabels.map(f => countByFiliere[f] || 0);
+
+  new Chart(document.getElementById('chartRepartition'), {
+    type: 'doughnut',
+    data: {
+      labels: filiereLabels,
+      datasets: [{
+        data: doughnutData,
+        backgroundColor: filiereLabels.map((_,i) => colors[i % colors.length]+'cc'),
+        borderColor: '#ffffff',
+        borderWidth: 3,
+        hoverOffset: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyleWidth: 8 } },
+        tooltip: { callbacks: { label: ctx => ' '+ctx.label+' : '+ctx.parsed+' étud.' } }
+      },
+      cutout: '60%',
+    }
+  });
+
+  /* ── Histogramme distribution ── */
+  const bins = [[0,5],[5,8],[8,10],[10,12],[12,14],[14,16],[16,18],[18,20]];
+  const binLabels = bins.map(b => b[0]+'-'+b[1]);
+  const binCounts = bins.map(b => moyennes.filter(m => m >= b[0] && m < b[1]).length);
+  if (moyennes.includes(20)) binCounts[binCounts.length-1]++;
+
+  new Chart(document.getElementById('chartDistrib'), {
+    type: 'bar',
+    data: {
+      labels: binLabels,
+      datasets: [{
+        label: 'Effectif',
+        data: binCounts,
+        backgroundColor: binCounts.map((v,i) => {
+          const labelStart = parseFloat(binLabels[i].split('-')[0]);
+          return labelStart >= 10 ? accent+'cc' : '#dc262699';
+        }),
+        borderColor: accent,
+        borderWidth: 1,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' '+ctx.parsed.y+' étudiant(s)' } } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: 'rgba(79,70,229,0.06)' }, ticks: { stepSize: 1 } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  /* ── Top 10 horizontal ── */
+  new Chart(document.getElementById('chartTop10'), {
+    type: 'bar',
+    data: {
+      labels: top10Names,
+      datasets: [{
+        label: 'Moyenne',
+        data: top10Moys,
+        backgroundColor: top10Moys.map(v => v >= 14 ? '#05966966' : v >= 10 ? accent+'99' : '#dc262699'),
+        borderColor:      top10Moys.map(v => v >= 14 ? '#059669' : v >= 10 ? accent : '#dc2626'),
+        borderWidth: 1.5,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' '+ctx.parsed.x.toFixed(2)+'/20' } } },
+      scales: {
+        x: { min: 0, max: 20, grid: { color: 'rgba(79,70,229,0.06)' }, ticks: { callback: v => v+'/20' } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+</script>
+
+{% endblock %}
