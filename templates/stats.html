@@ -476,7 +476,7 @@
     </div>
     <div class="metric-card">
       <div class="metric-label">Moyenne générale</div>
-      <div class="metric-value {% if moyenne.moy >= 14 %}green{% elif moyenne.moy >= 10 %}amber{% else %}red{% endif %}">
+      <div class="metric-value {% if (moyenne.moy|float) >= 14 %}green{% elif (moyenne.moy|float) >= 10 %}amber{% else %}red{% endif %}">
         {{ moyenne.moy | round(2) }}
       </div>
       <div class="metric-sub">Sur 20 points</div>
@@ -534,7 +534,7 @@
         <tr>
           <td data-label="Filière" style="font-weight:500;">{{ f.filiere }}</td>
           <td data-label="Moyenne">
-            <span class="moyenne {% if f.moy >= 14 %}moy-high{% elif f.moy >= 10 %}moy-mid{% else %}moy-low{% endif %}">
+            <span class="moyenne {% if (f.moy|float) >= 14 %}moy-high{% elif (f.moy|float) >= 10 %}moy-mid{% else %}moy-low{% endif %}">
               {{ f.moy | round(2) }}/20
             </span>
           </td>
@@ -731,7 +731,7 @@
             </div>
           </td>
           <td data-label="Moyenne">
-            <span class="moyenne {% if e.moyenne >= 14 %}moy-high{% elif e.moyenne >= 10 %}moy-mid{% else %}moy-low{% endif %}">
+            <span class="moyenne {% if (e.moyenne|float) >= 14 %}moy-high{% elif (e.moyenne|float) >= 10 %}moy-mid{% else %}moy-low{% endif %}">
               {{ e.moyenne }}/20
             </span>
           </td>

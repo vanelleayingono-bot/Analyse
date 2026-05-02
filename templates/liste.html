@@ -535,7 +535,7 @@
       </div>
       <div class="mini-stat-body">
         <div class="mini-stat-num" id="stat-avg">
-          {% if etudiants %}{{ "%.1f"|format(etudiants|sum(attribute='moyenne') / etudiants|length) }}{% else %}—{% endif %}
+          {% if etudiants %}{% set ns = namespace(total=0.0) %}{% for e in etudiants %}{% set ns.total = ns.total + (e.moyenne | float) %}{% endfor %}{{ "%.1f"|format(ns.total / etudiants|length) }}{% else %}—{% endif %}
         </div>
         <div class="mini-stat-label">Moyenne générale</div>
       </div>
@@ -596,11 +596,11 @@
           <td data-label="Niveau"><span class="badge-niveau">{{ e.niveau }}</span></td>
           <td data-label="Moyenne">
             <div class="moy-bar-wrap">
-              <span class="moyenne {% if e.moyenne >= 14 %}moy-high{% elif e.moyenne >= 10 %}moy-mid{% else %}moy-low{% endif %}">
+              <span class="moyenne {% if (e.moyenne|float) >= 14 %}moy-high{% elif (e.moyenne|float) >= 10 %}moy-mid{% else %}moy-low{% endif %}">
                 {{ e.moyenne }}/20
               </span>
               <div class="moy-bar">
-                <div class="moy-bar-fill {% if e.moyenne >= 14 %}fill-high{% elif e.moyenne >= 10 %}fill-mid{% else %}fill-low{% endif %}"
+                <div class="moy-bar-fill {% if (e.moyenne|float) >= 14 %}fill-high{% elif (e.moyenne|float) >= 10 %}fill-mid{% else %}fill-low{% endif %}"
                      style="width: {{ (e.moyenne / 20 * 100)|round }}%"></div>
               </div>
             </div>
